@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StarWars</title>
+  </head>
+  <style>
+    #container {
+      width: 100%;
+      margin: auto;
+      position: relative;
+      text-align: center;
+      color: white;
+    }
+    img {
+      width: 100%;
+      height: 700px;
+    }
+    input {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 35%;
+      border: none;
+      outline: none;
+      height: 40px;
+      border-radius: 20px;
+      background-color: aquamarine;
+      text-align: center;
+      font-size: 30px;
+    }
+    #container #box{
+      width: 35%;
+      height: 200px;
+      overflow: scroll;
+      border: none;
+      position: absolute;
+      top: 67%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: pink;
+      color: red;
+    }
+  </style>
+  <body>
+    <div id="container">
+      <img
+        src="https://static1.colliderimages.com/wordpress/wp-content/uploads/2021/05/star-wars-order.jpg?q=50&fit=contain&w=750&h=375&dpr=1.5"
+        alt=""
+      />
+      <input
+        type="text"
+        placeholder="search"
+        id="query"
+        oninput="debounce(main,100)"
+      />
+      <div id="box"></div>
+    </div>
+  </body>
+</html>
+<script type="text/javascript">
+  var timerId;
+
+  let movies_div = document.getElementById("box");
+
+  async function searchMovie(n) {
+    let res = await fetch(`https://swapi.dev/api/people/?search=${n}`);
+
+    let data = await res.json();
+    // console.log(data);
+
+    return data.results;
+  }
+  function appendMovies(m) {
+    movies_div.innerHTML = null;
+
+    m.forEach(({ name }) => {
+      let p = document.createElement("p");
+
+      p.innerHTML = name;
+
+      movies_div.append(p);
+    });
+  }
+
+  async function main() {
+    let name = document.getElementById("query").value;
+
+    if (name.length == 0) {
+      return false;
+    }
+
+    var movies = await searchMovie(name);
+
+    //console.log(movies);
+    if (movies != undefined) {
+      appendMovies(movies);
+    }
+    console.log(movies);
+  }
+  function debounce(func, dealy) {
+    console.log("debounce_fired");
+    let name = document.getElementById("query").value;
+
+    if (name.length === 0) {
+      return false;
+    }
+
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+    timerId = setTimeout(() => {
+      func();
+    }, dealy);
+  }
+</script>
